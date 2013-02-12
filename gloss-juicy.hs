@@ -10,12 +10,13 @@ main = do
 	args <- getArgs
 	case args of 
 		[filename] -> do
+			putStrLn "Before reading image"
 			tryRead <- readImage filename
 			case tryRead of
 			  Left err -> putStrLn ("error reading png file " ++ filename ++ ": " ++ err)
-			  Right im -> tryConvert im
+			  Right im -> putStrLn "Will try to convert now..." >> tryConvert im
 
-		_          -> putStrLn "usage: gloss-juicy <foo>.png"
+		_          -> putStrLn "usage: gloss-juicy <file> -- displays the image in a gloss window"
  
   where tryConvert img = case fromDynamicImage img of
   	      Just p  -> displayPic p
