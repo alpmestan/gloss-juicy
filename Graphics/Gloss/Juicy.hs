@@ -7,9 +7,6 @@ import Codec.Picture.Types
 import Graphics.Gloss.Data.Picture
 import Data.Vector.Storable( unsafeToForeignPtr )
 
--- FOR DEBUGGING
-import Debug.Trace (trace)
-
 fromDynamicImage :: DynamicImage -> Maybe Picture
 fromDynamicImage (ImageY8 img)     = fromImageY8     img
 fromDynamicImage (ImageYF img)     = fromImageYF     img
@@ -19,16 +16,26 @@ fromDynamicImage (ImageRGBF img)   = fromImageRGBF   img
 fromDynamicImage (ImageRGBA8 img)  = fromImageRGBA8  img
 fromDynamicImage (ImageYCbCr8 img) = fromImageYCbCr8 img
 
+-- Courtesy of Vincent Berthoux, JuicyPixels author
+-- bmp (and thus gloss) starts by the lines at the bottom
+-- JuicyPixels does the converse
+horizontalSwap :: Image PixelRGBA8 -> Image PixelRGBA8
+horizontalSwap img@(Image { imageWidth = w, imageHeight = h }) =
+    generateImage swapper w h
+      where swapper x y = PixelRGBA8 a b g r
+                where PixelRGBA8 r g b a = pixelAt img x (h - y - 1)
+
+-- | O(1) conversion of PixelRGBA8 -> Picture
 fromImageRGBA8 :: Image PixelRGBA8 -> Maybe Picture
 fromImageRGBA8 img@(Image { imageWidth = w, imageHeight = h, imageData = rawData }) =
-  Just $ bitmapOfByteString w h ptr False
+  Just $ bitmapOfForeignPtr w h ptr False
     where -- only if needed
-          -- swapedImage = pixelMap (\(PixelRGBA8 r g b a) -> PixelRGBA8 a b g r) img 
-          (ptr, _, _) = unsafeToForeignPtr rawData -- $ imageData swapedImage
+          swapedImage = horizontalSwap img
+          (ptr, _, _) = unsafeToForeignPtr $ imageData swapedImage -- rawData
 {-# INLINE fromImageRGBA8 #-}
 
 fromImageRGB8 :: Image PixelRGB8 -> Maybe Picture
-fromImageRGB8 img = fromImageRGBA8 . promoteImage
+fromImageRGB8 = fromImageRGBA8 . promoteImage
 {-# INLINE fromImageRGB8 #-}
 
 fromImageY8 :: Image Pixel8 -> Maybe Picture
