@@ -6,16 +6,14 @@ import Codec.Picture
 import Codec.Picture.Types
 import Graphics.Gloss.Data.Picture
 
-import Debug.Trace (trace)
-
 fromDynamicImage :: DynamicImage -> Maybe Picture
-fromDynamicImage (ImageY8 img)     = trace "Y8" $ fromImageY8     img
-fromDynamicImage (ImageYF img)     = trace "YF" $ fromImageYF     img
-fromDynamicImage (ImageYA8 img)    = trace "YA8" $ fromImageYA8    img
-fromDynamicImage (ImageRGB8 img)   = trace "RGB8" $ fromImageRGB8   img
-fromDynamicImage (ImageRGBF img)   = trace "RGBF" $ fromImageRGBF   img
-fromDynamicImage (ImageRGBA8 img)  = trace "RGBA8" $ fromImageRGBA8  img
-fromDynamicImage (ImageYCbCr8 img) = trace "YCbCr8" $ fromImageYCbCr8 img
+fromDynamicImage (ImageY8 img)     = fromImageY8     img
+fromDynamicImage (ImageYF img)     = fromImageYF     img
+fromDynamicImage (ImageYA8 img)    = fromImageYA8    img
+fromDynamicImage (ImageRGB8 img)   = fromImageRGB8   (pixelMap (\(PixelRGB8 r g b) -> PixelRGB8 b g r) img)
+fromDynamicImage (ImageRGBF img)   = fromImageRGBF   img
+fromDynamicImage (ImageRGBA8 img)  = fromImageRGBA8  (pixelMap (\(PixelRGBA8 r g b a) -> PixelRGBA8 b g r a) img)
+fromDynamicImage (ImageYCbCr8 img) = fromImageYCbCr8 img
 
 fromImageRGBA8 :: Image PixelRGBA8 -> Maybe Picture
 fromImageRGBA8 img = Just $ bitmapOfByteString (imageWidth img) 
@@ -25,11 +23,9 @@ fromImageRGBA8 img = Just $ bitmapOfByteString (imageWidth img)
 {-# INLINE fromImageRGBA8 #-}
 
 fromImageRGB8 :: Image PixelRGB8 -> Maybe Picture
-fromImageRGB8 img = Just $ bitmapOfByteString (imageWidth img) 
-                                              (imageHeight img) 
-                                              (L.toStrict $ encodeBitmap img) 
-                                              True 
+fromImageRGB8 = fromImageRGBA8 . promoteImage
 {-# INLINE fromImageRGB8 #-}
+
 
 fromImageY8 :: Image Pixel8 -> Maybe Picture
 fromImageY8 = fromImageRGBA8 . promoteImage
