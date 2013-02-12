@@ -48,11 +48,3 @@ Library
         Codec.BMP.FileHeader
         Codec.BMP.Pack
         Codec.BMP.Unpack
-
-Executable dump
-  build-depends: base, bytestring, binary, bmp
-  ghc-options:   -Wall -O2 -fno-warn-missing-signatures
-  extensions:    BangPatterns
-  main-is:       test/Dump.hs
-
-       
