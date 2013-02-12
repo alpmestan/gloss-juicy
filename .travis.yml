@@ -9,7 +9,7 @@ before_install:
   - cabal update
   - cabal install bmp-head/
 install:
-  - cabal install
+  - cabal install --force-reinstalls
   
 notifications:
   email:
