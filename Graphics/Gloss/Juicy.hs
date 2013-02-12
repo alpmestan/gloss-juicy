@@ -5,6 +5,7 @@ import qualified Data.ByteString.Lazy as L
 import Codec.Picture
 import Codec.Picture.Types
 import Graphics.Gloss.Data.Picture
+import Data.Vector.Storable( unsafeToForeignPtr )
 
 -- FOR DEBUGGING
 import Debug.Trace (trace)
@@ -13,16 +14,17 @@ fromDynamicImage :: DynamicImage -> Maybe Picture
 fromDynamicImage (ImageY8 img)     = fromImageY8     img
 fromDynamicImage (ImageYF img)     = fromImageYF     img
 fromDynamicImage (ImageYA8 img)    = fromImageYA8    img
-fromDynamicImage (ImageRGB8 img)   = trace "RGB8" $ fromImageRGB8 (pixelMap (\(PixelRGB8 r g b) -> PixelRGB8 b g r) img)
+fromDynamicImage (ImageRGB8 img)   = fromImageRGB8   img
 fromDynamicImage (ImageRGBF img)   = fromImageRGBF   img
-fromDynamicImage (ImageRGBA8 img)  = fromImageRGBA8  (pixelMap (\(PixelRGBA8 r g b a) -> PixelRGBA8 b g r a) img)
+fromDynamicImage (ImageRGBA8 img)  = fromImageRGBA8  img
 fromDynamicImage (ImageYCbCr8 img) = fromImageYCbCr8 img
 
 fromImageRGBA8 :: Image PixelRGBA8 -> Maybe Picture
-fromImageRGBA8 img = Just $ bitmapOfByteString (imageWidth img) 
-                                               (imageHeight img) 
-                                               (L.toStrict $ encodeBitmap img) 
-                                               True
+fromImageRGBA8 img@(Image { imageWidth = w, imageHeight = h, imageData = rawData }) =
+  Just $ bitmapOfByteString w h ptr False
+    where -- only if needed
+          -- swapedImage = pixelMap (\(PixelRGBA8 r g b a) -> PixelRGBA8 a b g r) img 
+          (ptr, _, _) = unsafeToForeignPtr rawData -- $ imageData swapedImage
 {-# INLINE fromImageRGBA8 #-}
 
 fromImageRGB8 :: Image PixelRGB8 -> Maybe Picture
