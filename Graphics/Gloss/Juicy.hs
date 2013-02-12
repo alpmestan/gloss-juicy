@@ -1,4 +1,13 @@
-module Graphics.Gloss.Juicy where
+module Graphics.Gloss.Juicy ( fromDynamicImage
+	                        , fromImageRGBA8
+	                        , fromImageRGB8
+	                        , fromImageY8
+	                        , fromImageYA8
+	                        , fromImageYCbCr8
+	                        , fromImageYF
+	                        , fromImageRGBF
+	                        ) 
+where
 
 import qualified Data.ByteString.Lazy as L
 
@@ -7,14 +16,16 @@ import Codec.Picture.Types
 import Graphics.Gloss.Data.Picture
 import Data.Vector.Storable( unsafeToForeignPtr )
 
+-- | Tries to convert a 'DynamicImage' from JuicyPixels to a gloss 'Picture'.  All formats except RGBF and YF should successfully
+--   yield a 'Picture'.
 fromDynamicImage :: DynamicImage -> Maybe Picture
-fromDynamicImage (ImageY8 img)     = fromImageY8     img
-fromDynamicImage (ImageYF img)     = fromImageYF     img
-fromDynamicImage (ImageYA8 img)    = fromImageYA8    img
-fromDynamicImage (ImageRGB8 img)   = fromImageRGB8   img
-fromDynamicImage (ImageRGBF img)   = fromImageRGBF   img
-fromDynamicImage (ImageRGBA8 img)  = fromImageRGBA8  img
-fromDynamicImage (ImageYCbCr8 img) = fromImageYCbCr8 img
+fromDynamicImage (ImageY8 img)     = Just $ fromImageY8 img
+fromDynamicImage (ImageYA8 img)    = Just $ fromImageYA8 img
+fromDynamicImage (ImageRGB8 img)   = Just $ fromImageRGB8 img
+fromDynamicImage (ImageRGBA8 img)  = Just $ fromImageRGBA8 img
+fromDynamicImage (ImageYCbCr8 img) = Just $ fromImageYCbCr8 img
+fromDynamicImage (ImageRGBF img)   = Nothing
+fromDynamicImage (ImageYF img)     = Nothing
 
 -- Courtesy of Vincent Berthoux, JuicyPixels author
 -- bmp (and thus gloss) starts by the lines at the bottom
@@ -24,36 +35,32 @@ horizontalSwap img@(Image { imageWidth = w, imageHeight = h }) =
     generateImage swapper w h
       where swapper x y = PixelRGBA8 a b g r
                 where PixelRGBA8 r g b a = pixelAt img x (h - y - 1)
+{-# INLINE horizontalSwap #-}
 
--- | O(1) conversion of PixelRGBA8 -> Picture
+-- | O(N) conversion from 'PixelRGBA8' image to gloss 'Picture', where N is the number of pixels.
 fromImageRGBA8 :: Image PixelRGBA8 -> Maybe Picture
 fromImageRGBA8 img@(Image { imageWidth = w, imageHeight = h, imageData = rawData }) =
   Just $ bitmapOfForeignPtr w h ptr False
-    where -- only if needed
-          swapedImage = horizontalSwap img
-          (ptr, _, _) = unsafeToForeignPtr $ imageData swapedImage -- rawData
+    where swapedImage = horizontalSwap img
+          (ptr, _, _) = unsafeToForeignPtr $ imageData swapedImage
 {-# INLINE fromImageRGBA8 #-}
 
+-- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelRGB8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.
 fromImageRGB8 :: Image PixelRGB8 -> Maybe Picture
 fromImageRGB8 = fromImageRGBA8 . promoteImage
 {-# INLINE fromImageRGB8 #-}
 
+-- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelY8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.
 fromImageY8 :: Image Pixel8 -> Maybe Picture
 fromImageY8 = fromImageRGBA8 . promoteImage
 {-# INLINE fromImageY8 #-}
 
+-- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelYA8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.
 fromImageYA8 :: Image PixelYA8 -> Maybe Picture
 fromImageYA8 = fromImageRGBA8 . promoteImage
 {-# INLINE fromImageYA8 #-}
 
+-- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelYCbCr8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.
 fromImageYCbCr8 :: Image PixelYCbCr8 -> Maybe Picture
 fromImageYCbCr8 = fromImageRGB8 . convertImage
 {-# INLINE fromImageYCbCr8 #-}
-
-fromImageYF :: Image PixelF -> Maybe Picture
-fromImageYF _ = Nothing
-{-# INLINE fromImageYF #-}
-
-fromImageRGBF :: Image PixelRGBF -> Maybe Picture
-fromImageRGBF _ = Nothing
-{-# INLINE fromImageRGBF #-}
