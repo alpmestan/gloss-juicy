@@ -4,8 +4,6 @@ module Graphics.Gloss.Juicy ( fromDynamicImage
 	                        , fromImageY8
 	                        , fromImageYA8
 	                        , fromImageYCbCr8
-	                        , fromImageYF
-	                        , fromImageRGBF
 	                        ) 
 where
 
@@ -27,7 +25,7 @@ fromDynamicImage (ImageYCbCr8 img) = Just $ fromImageYCbCr8 img
 fromDynamicImage (ImageRGBF img)   = Nothing
 fromDynamicImage (ImageYF img)     = Nothing
 
--- Courtesy of Vincent Berthoux, JuicyPixels author
+-- Courtesy of Vincent Berthoux, JuicyPixels' author
 -- bmp (and thus gloss) starts by the lines at the bottom
 -- JuicyPixels does the converse
 horizontalSwap :: Image PixelRGBA8 -> Image PixelRGBA8
@@ -38,29 +36,29 @@ horizontalSwap img@(Image { imageWidth = w, imageHeight = h }) =
 {-# INLINE horizontalSwap #-}
 
 -- | O(N) conversion from 'PixelRGBA8' image to gloss 'Picture', where N is the number of pixels.
-fromImageRGBA8 :: Image PixelRGBA8 -> Maybe Picture
+fromImageRGBA8 :: Image PixelRGBA8 -> Picture
 fromImageRGBA8 img@(Image { imageWidth = w, imageHeight = h, imageData = rawData }) =
-  Just $ bitmapOfForeignPtr w h ptr False
+  bitmapOfForeignPtr w h ptr False
     where swapedImage = horizontalSwap img
           (ptr, _, _) = unsafeToForeignPtr $ imageData swapedImage
 {-# INLINE fromImageRGBA8 #-}
 
 -- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelRGB8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.
-fromImageRGB8 :: Image PixelRGB8 -> Maybe Picture
+fromImageRGB8 :: Image PixelRGB8 -> Picture
 fromImageRGB8 = fromImageRGBA8 . promoteImage
 {-# INLINE fromImageRGB8 #-}
 
 -- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelY8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.
-fromImageY8 :: Image Pixel8 -> Maybe Picture
+fromImageY8 :: Image Pixel8 -> Picture
 fromImageY8 = fromImageRGBA8 . promoteImage
 {-# INLINE fromImageY8 #-}
 
 -- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelYA8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.
-fromImageYA8 :: Image PixelYA8 -> Maybe Picture
+fromImageYA8 :: Image PixelYA8 -> Picture
 fromImageYA8 = fromImageRGBA8 . promoteImage
 {-# INLINE fromImageYA8 #-}
 
 -- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelYCbCr8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.
-fromImageYCbCr8 :: Image PixelYCbCr8 -> Maybe Picture
+fromImageYCbCr8 :: Image PixelYCbCr8 -> Picture
 fromImageYCbCr8 = fromImageRGB8 . convertImage
 {-# INLINE fromImageYCbCr8 #-}
