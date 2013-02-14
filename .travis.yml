@@ -7,7 +7,6 @@ before_install:
   # Uncomment whenever hackage is down.
   # - mkdir -p ~/.cabal && cp travis/config ~/.cabal/config && cabal update
   - cabal update
-  - cabal install bmp-head/
 install:
   - cabal install --force-reinstalls
   
