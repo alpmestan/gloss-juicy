@@ -1,10 +1,21 @@
-module Graphics.Gloss.Juicy ( fromDynamicImage
-	                        , fromImageRGBA8
-	                        , fromImageRGB8
-	                        , fromImageY8
-	                        , fromImageYA8
-	                        , fromImageYCbCr8
-	                        ) 
+module Graphics.Gloss.Juicy
+    (
+    -- * Conversion from JuicyPixels' types to gloss' Picture
+      fromDynamicImage
+	, fromImageRGBA8
+	, fromImageRGB8
+	, fromImageY8
+	, fromImageYA8
+	, fromImageYCbCr8
+
+    -- * Loading a gloss Picture from a file through JuicyPixels
+    , loadJuicy
+    , loadJuicyJPG
+    , loadJuicyPNG
+
+    -- * From gloss, exported here for convenience
+    , loadBMP
+	)
 where
 
 import Codec.Picture
@@ -60,3 +71,25 @@ fromImageYA8 = fromImageRGBA8 . promoteImage
 fromImageYCbCr8 :: Image PixelYCbCr8 -> Picture
 fromImageYCbCr8 = fromImageRGB8 . convertImage
 {-# INLINE fromImageYCbCr8 #-}
+
+-- | Tries to load an image file into a Picture using 'readImage' from JuicyPixels.
+--   It means it'll try to successively read the content as an image in the following order,
+--   until it succeeds (or fails on all of them): jpeg, png, bmp, gif, hdr (the last two are not supported)
+--   This is handy when you don't know what format the image contained in the file is encoded with.
+--   If you know the format in advance, use 'loadBMP', 'loadJuicyJPG' or 'loadJuicyPNG'
+loadJuicy :: FilePath -> IO (Maybe Picture)
+loadJuicy = loadWith readImage
+{-# INLINE loadJuicy #-}
+
+loadJuicyJPG :: FilePath -> IO (Maybe Picture)
+loadJuicyJPG = loadWith readJpeg
+{-# INLINE loadJuicyJPG #-}
+
+loadJuicyPNG :: FilePath -> IO (Maybe Picture)
+loadJuicyPNG = loadWith readPng
+{-# INLINE loadJuicyPNG #-}
+
+loadWith :: (FilePath -> IO (Either String DynamicImage)) -> FilePath -> IO (Maybe Picture)
+loadWith reader fp = do
+    eImg <- reader fp
+    return $ either (const Nothing) fromDynamicImage eImg
