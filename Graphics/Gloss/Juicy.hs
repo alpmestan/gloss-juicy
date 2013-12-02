@@ -47,7 +47,7 @@ horizontalSwap img@(Image { imageWidth = w, imageHeight = h }) =
 -- | O(N) conversion from 'PixelRGBA8' image to gloss 'Picture', where N is the number of pixels.
 fromImageRGBA8 :: Image PixelRGBA8 -> Picture
 fromImageRGBA8 img@(Image { imageWidth = w, imageHeight = h, imageData = _ }) =
-  bitmapOfForeignPtr w h ptr False
+  bitmapOfForeignPtr w h ptr True
     where swapedImage = horizontalSwap img
           (ptr, _, _) = unsafeToForeignPtr $ imageData swapedImage
 {-# INLINE fromImageRGBA8 #-}
