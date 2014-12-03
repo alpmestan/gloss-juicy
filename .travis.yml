@@ -8,10 +8,8 @@ before_install:
   # - mkdir -p ~/.cabal && cp travis/config ~/.cabal/config && cabal update
   - cabal update
   - cabal install hsc2hs
-install:
-  - cabal install --force-reinstalls
   
 notifications:
   email:
       - alpmestan@gmail.com
-  irc: "irc.freenode.org#hnn"
+  irc: "irc.freenode.org#haskell-math"
