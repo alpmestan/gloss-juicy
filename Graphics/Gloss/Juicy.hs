@@ -21,6 +21,7 @@ where
 import Codec.Picture
 import Codec.Picture.Types
 import Graphics.Gloss.Data.Picture
+import Graphics.Gloss.Data.Bitmap
 import Data.Vector.Storable        (unsafeToForeignPtr)
 
 -- | Tries to convert a 'DynamicImage' from JuicyPixels to a gloss 'Picture'.  All formats except RGBF and YF should successfully
