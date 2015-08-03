@@ -1,5 +1,5 @@
 name:                gloss-juicy
-version:             0.2
+version:             0.2.1
 synopsis:            Load any image supported by Juicy.Pixels in your gloss application
 description:         Lets you convert any image supported by Juicy.Pixels in a gloss application by converting to gloss' Bitmap representation.
 		     .
@@ -20,7 +20,7 @@ library
   build-depends:       base >=4 && < 5,
                        bytestring,
                        bmp >= 1.2.4.1,
-                       gloss >= 1.8,
+                       gloss >= 1.10,
                        JuicyPixels,
                        vector
   ghc-options:         -O2 -Wall -threaded
@@ -30,7 +30,7 @@ executable gloss-juicy-viewer
   build-depends:       base >= 4 && < 5,
                        bytestring,
                        bmp >= 1.2.4.1,
-                       gloss,
+                       gloss >= 1.10,
                        JuicyPixels,
                        vector
   ghc-options:         -O2 -Wall -threaded
