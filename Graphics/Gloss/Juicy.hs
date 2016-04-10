@@ -2,11 +2,11 @@ module Graphics.Gloss.Juicy
     (
     -- * Conversion from JuicyPixels' types to gloss' Picture
       fromDynamicImage
-	, fromImageRGBA8
-	, fromImageRGB8
-	, fromImageY8
-	, fromImageYA8
-	, fromImageYCbCr8
+    , fromImageRGBA8
+    , fromImageRGB8
+    , fromImageY8
+    , fromImageYA8
+    , fromImageYCbCr8
 
     -- * Loading a gloss Picture from a file through JuicyPixels
     , loadJuicy
@@ -15,7 +15,7 @@ module Graphics.Gloss.Juicy
 
     -- * From gloss, exported here for convenience
     , loadBMP
-	)
+    )
 where
 
 import Codec.Picture
@@ -35,22 +35,13 @@ fromDynamicImage (ImageYCbCr8 img) = Just $ fromImageYCbCr8 img
 fromDynamicImage (ImageRGBF _)     = Nothing
 fromDynamicImage (ImageYF _)       = Nothing
 
--- Courtesy of Vincent Berthoux, JuicyPixels' author
--- bmp (and thus gloss) starts by the lines at the bottom
--- JuicyPixels does the converse
-horizontalSwap :: Image PixelRGBA8 -> Image PixelRGBA8
-horizontalSwap img@(Image { imageWidth = w, imageHeight = h }) =
-    generateImage swapper w h
-      where swapper x y = PixelRGBA8 a b g r
-                where PixelRGBA8 r g b a = pixelAt img x (h - y - 1)
-{-# INLINE horizontalSwap #-}
-
 -- | O(N) conversion from 'PixelRGBA8' image to gloss 'Picture', where N is the number of pixels.
 fromImageRGBA8 :: Image PixelRGBA8 -> Picture
-fromImageRGBA8 img@(Image { imageWidth = w, imageHeight = h, imageData = _ }) =
-  bitmapOfForeignPtr w h ptr True
-    where swapedImage = horizontalSwap img
-          (ptr, _, _) = unsafeToForeignPtr $ imageData swapedImage
+fromImageRGBA8 (Image { imageWidth = w, imageHeight = h, imageData = id }) =
+  bitmapOfForeignPtr w h
+                     (BitmapFormat TopToBottom PxRGBA)
+                     ptr True
+    where (ptr, _, _) = unsafeToForeignPtr id
 {-# INLINE fromImageRGBA8 #-}
 
 -- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelRGB8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.
