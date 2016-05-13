@@ -19,9 +19,48 @@ module Graphics.Gloss.Juicy
 where
 
 import Codec.Picture
+    ( readImage
+    , readJpeg
+    , readPng
+    )
 import Codec.Picture.Types
+    ( convertImage
+    , DynamicImage
+        ( ImageRGBF
+        , ImageYF
+        , ImageY8
+        , ImageYA8
+        , ImageRGB8
+        , ImageRGBA8
+        , ImageYCbCr8
+        )
+    , Image
+        ( imageWidth
+        , imageHeight
+        , imageData
+        , Image
+        )
+    , Pixel8
+    , PixelYA8
+    , PixelRGB8
+    , PixelRGBA8
+        ( PixelRGBA8
+        )
+    , PixelYCbCr8
+    , Pixel
+        ( pixelAt
+        )
+    , ColorConvertible
+        ( promoteImage
+        )
+    , generateImage
+    )
 import Graphics.Gloss.Data.Picture
+    ( Picture
+    )
 import Graphics.Gloss.Data.Bitmap
+    ( bitmapOfForeignPtr
+    )
 import Data.Vector.Storable        (unsafeToForeignPtr)
 
 -- | Tries to convert a 'DynamicImage' from JuicyPixels to a gloss 'Picture'.  All formats except RGBF and YF should successfully
@@ -48,7 +87,7 @@ horizontalSwap img@(Image { imageWidth = w, imageHeight = h }) =
 -- | O(N) conversion from 'PixelRGBA8' image to gloss 'Picture', where N is the number of pixels.
 fromImageRGBA8 :: Image PixelRGBA8 -> Picture
 fromImageRGBA8 img@(Image { imageWidth = w, imageHeight = h, imageData = _ }) =
-  bitmapOfForeignPtr w h ptr True
+  bitmapOfForeignPtr w h ptr True _
     where swapedImage = horizontalSwap img
           (ptr, _, _) = unsafeToForeignPtr $ imageData swapedImage
 {-# INLINE fromImageRGBA8 #-}
