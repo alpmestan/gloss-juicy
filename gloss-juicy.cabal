@@ -19,8 +19,8 @@ library
      
   build-depends:       base >=4 && < 5,
                        bytestring,
-                       bmp >= 1.2.4.1,
-                       gloss >= 1.8,
+                       bmp,
+                       gloss,
                        JuicyPixels,
                        vector
   ghc-options:         -O2 -Wall -threaded
@@ -29,7 +29,7 @@ executable gloss-juicy-viewer
   main-is:             gloss-juicy.hs
   build-depends:       base >= 4 && < 5,
                        bytestring,
-                       bmp >= 1.2.4.1,
+                       bmp,
                        gloss,
                        JuicyPixels,
                        vector
