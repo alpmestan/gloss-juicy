@@ -60,6 +60,10 @@ import Graphics.Gloss.Data.Picture
     )
 import Graphics.Gloss.Data.Bitmap
     ( bitmapOfForeignPtr
+    , BitmapFormat ( BitmapFormat )
+    , PixelFormat ( PxABGR )
+    , RowOrder ( BottomToTop )
+    , loadBMP
     )
 import Data.Vector.Storable        (unsafeToForeignPtr)
 
@@ -87,9 +91,9 @@ horizontalSwap img@(Image { imageWidth = w, imageHeight = h }) =
 -- | O(N) conversion from 'PixelRGBA8' image to gloss 'Picture', where N is the number of pixels.
 fromImageRGBA8 :: Image PixelRGBA8 -> Picture
 fromImageRGBA8 img@(Image { imageWidth = w, imageHeight = h, imageData = _ }) =
-  bitmapOfForeignPtr w h ptr True _
-    where swapedImage = horizontalSwap img
-          (ptr, _, _) = unsafeToForeignPtr $ imageData swapedImage
+  bitmapOfForeignPtr w h (BitmapFormat BottomToTop PxABGR) ptr True
+    where swapedImage  = horizontalSwap img
+          (ptr, _, _)  = unsafeToForeignPtr $ imageData swapedImage
 {-# INLINE fromImageRGBA8 #-}
 
 -- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelRGB8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.
