@@ -4,7 +4,8 @@ script:
   - cabal install --only-dependencies && cabal configure && cabal build
 
 ghc:
-  - 7.8
+  - 7.10
+  - 8.0
 
 notifications:
   email:
