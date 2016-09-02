@@ -2,11 +2,11 @@ module Graphics.Gloss.Juicy
     (
     -- * Conversion from JuicyPixels' types to gloss' Picture
       fromDynamicImage
-	, fromImageRGBA8
-	, fromImageRGB8
-	, fromImageY8
-	, fromImageYA8
-	, fromImageYCbCr8
+    , fromImageRGBA8
+    , fromImageRGB8
+    , fromImageY8
+    , fromImageYA8
+    , fromImageYCbCr8
 
     -- * Loading a gloss Picture from a file through JuicyPixels
     , loadJuicy
@@ -15,7 +15,7 @@ module Graphics.Gloss.Juicy
 
     -- * From gloss, exported here for convenience
     , loadBMP
-	)
+    )
 where
 
 import Codec.Picture
@@ -37,9 +37,11 @@ fromDynamicImage (ImageYF _)       = Nothing
 
 -- | O(N) conversion from 'PixelRGBA8' image to gloss 'Picture', where N is the number of pixels.
 fromImageRGBA8 :: Image PixelRGBA8 -> Picture
-fromImageRGBA8 img@(Image { imageWidth = w, imageHeight = h, imageData = _ }) =
-        bitmapOfForeignPtr w h (BitmapFormat TopToBottom PxRGBA) ptr True
-    where (ptr, _, _) = unsafeToForeignPtr (imageData img)
+fromImageRGBA8 (Image { imageWidth = w, imageHeight = h, imageData = id }) =
+  bitmapOfForeignPtr w h
+                     (BitmapFormat TopToBottom PxRGBA)
+                     ptr True
+    where (ptr, _, _) = unsafeToForeignPtr id
 {-# INLINE fromImageRGBA8 #-}
 
 -- | Creation of a gloss 'Picture' by promoting (through 'promoteImage') the 'PixelRGB8' image to 'PixelRGBA8' and calling 'fromImageRGBA8'.

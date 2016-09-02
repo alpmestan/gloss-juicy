@@ -1,5 +1,5 @@
 name:                gloss-juicy
-version:             0.2.1
+version:             0.2.2
 synopsis:            Load any image supported by Juicy.Pixels in your gloss application
 description:         Lets you convert any image supported by Juicy.Pixels in a gloss application by converting to gloss' Bitmap representation.
 		     .
@@ -16,7 +16,7 @@ cabal-version:       >=1.8
 
 library
   exposed-modules:     Graphics.Gloss.Juicy
-     
+
   build-depends:       base >=4 && < 5,
                        bytestring,
                        bmp >= 1.2.4.1,
