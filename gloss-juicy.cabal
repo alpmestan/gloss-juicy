@@ -13,6 +13,7 @@ copyright:           2013-2015 Alp Mestanogullari
 category:            Graphics
 build-type:          Simple
 cabal-version:       >=1.8
+tested-with:         GHC == 8.0.1
 
 library
   exposed-modules:     Graphics.Gloss.Juicy
