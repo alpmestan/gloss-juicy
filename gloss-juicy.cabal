@@ -24,7 +24,7 @@ library
                        gloss >= 1.10,
                        JuicyPixels,
                        vector
-  ghc-options:         -O2 -Wall -threaded
+  ghc-options:         -O2 -Wall
 
 executable gloss-juicy-viewer
   main-is:             gloss-juicy.hs
