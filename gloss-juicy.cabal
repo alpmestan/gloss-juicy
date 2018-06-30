@@ -16,6 +16,7 @@ cabal-version:       >=1.8
 tested-with:         GHC == 8.0.1
 
 library
+  hs-source-dirs:      src
   exposed-modules:     Graphics.Gloss.Juicy
 
   build-depends:       base >=4 && < 5,
@@ -23,15 +24,35 @@ library
                        bmp >= 1.2.4.1,
                        gloss >= 1.10,
                        JuicyPixels,
-                       vector
+                       vector,
+                       containers,     
+                       gloss,          
+                       gloss-rendering,
+                       GLFW-b,
+                       OpenGLRaw,    
+                       GLUT
+  other-modules:       Graphics.Gloss.ExportPNG
+
   ghc-options:         -O2 -Wall
 
 executable gloss-juicy-viewer
   main-is:             gloss-juicy.hs
+  hs-source-dirs:      app
   build-depends:       base >= 4 && < 5,
                        bytestring,
                        bmp >= 1.2.4.1,
                        gloss >= 1.10,
                        JuicyPixels,
-                       vector
+                       vector,
+                       gloss-juicy
   ghc-options:         -O2 -Wall -threaded
+
+executable gloss-juicy-exporter
+  main-is: Export.hs
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , gloss
+    , gloss-juicy

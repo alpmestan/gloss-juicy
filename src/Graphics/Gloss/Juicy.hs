@@ -15,6 +15,10 @@ module Graphics.Gloss.Juicy
 
     -- * From gloss, exported here for convenience
     , loadBMP
+
+    -- * Export gloss Picture to PNG
+    , exportFrameToPNG
+    , exportFramesToPNG
     )
 where
 
@@ -23,6 +27,7 @@ import Codec.Picture.Types
 import Graphics.Gloss.Data.Picture
 import Graphics.Gloss.Data.Bitmap
 import Data.Vector.Storable        (unsafeToForeignPtr)
+import Graphics.Gloss.ExportPNG
 
 -- | Tries to convert a 'DynamicImage' from JuicyPixels to a gloss 'Picture'.  All formats except RGBF and YF should successfully
 --   yield a 'Picture'.
