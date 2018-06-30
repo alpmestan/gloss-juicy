@@ -23,7 +23,15 @@ library
                        bmp >= 1.2.4.1,
                        gloss >= 1.10,
                        JuicyPixels,
-                       vector
+                       vector,
+                       containers,     
+                       gloss,          
+                       gloss-rendering,
+                       GLFW-b,
+                       OpenGLRaw,    
+                       GLUT
+  other-modules:       Graphics.Gloss.ExportPNG
+
   ghc-options:         -O2 -Wall
 
 executable gloss-juicy-viewer
@@ -33,5 +41,14 @@ executable gloss-juicy-viewer
                        bmp >= 1.2.4.1,
                        gloss >= 1.10,
                        JuicyPixels,
-                       vector
+                       vector,
+                       gloss-juicy
   ghc-options:         -O2 -Wall -threaded
+
+executable gloss-juicy-exporter
+  main-is: Export.hs
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , gloss
+    , gloss-juicy
